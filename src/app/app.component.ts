@@ -1,7 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 
+import { Post } from './post.model';
+import { NgForm } from '@angular/forms';
 
 @Component({
   selector: 'app-root',
@@ -10,8 +12,9 @@ import { map } from 'rxjs/operators';
 })
 export class AppComponent {
    title = 'Angular http Requests';
-
-   loadedPosts = [];
+    @ViewChild('postForm') postForm: NgForm;
+   loadedPosts: Post[]= [];
+   isFetching = false;
 
   constructor(private http: HttpClient) {}
 
@@ -28,10 +31,15 @@ export class AppComponent {
     //@return — An Observable of the response, with the response body as a JSON object.
     //Ekata thama me subscribe karala tynne
 
-    this.http.post('https://ng-complete-guide-4fb9a.firebaseio.com/posts.json', 
+
+    //me request response eka apata define karanna pluwn<name: string> //name: "-ML6SQaXWU9VpoETmH29"
+    //response eka object ekak name: string tyena e nisa {name: string} kiyala object ekak widiyata danawa
+    //generic http verb eke danna puluwan eka
+    this.http.post<{name: string}>('https://ng-complete-guide-4fb9a.firebaseio.com/posts.json', 
     postData).subscribe(
       responseData=>{
         console.log(responseData);
+        //this.fetchPosts();
       }
     );
     //Angular eka observables use karanawa godak, Http requests manage karanneth observables walin
@@ -46,6 +54,8 @@ export class AppComponent {
     //---------------------------------------------------------------------------------------------------//
         //POST request ekak yawanakota OPTIONS kiyala method ekakin request ekakyawala balanawa post request 
         //send karanna allow karalada tynne balanna, 200 status code eka awoth ekata actual data tika POST karanawa
+    this.postForm.reset();
+    
   }
 
   onFetchPosts() {
@@ -58,16 +68,22 @@ export class AppComponent {
   }
   
   private fetchPosts(){
-
+    this.isFetching = true;//start to fetch posts
     //observable data tika subscribe wenna kalin pipe(eka eka operatoes walata danawa pipe eka athuledi) 
     //ekakata dala wenas karagannawa
     //map eken e wenas karapu data tika automatically re wrap karanawa observable ekata
     //eka thama anthimata subscribe wenne
     //response data thama original get eken enne, e tika thama map ekata aragena transform karanne
     //ena data wala encripted key ekak and object data thama tynne, e tika map eke athuledi array ekakata gannawa
-    this.http.get('https://ng-complete-guide-4fb9a.firebaseio.com/posts.json')
+
+    this.http.get<{[key: string]: Post}>('https://ng-complete-guide-4fb9a.firebaseio.com/posts.json')
+    //.pipe(map((responsedata: {[key: string]: Post})=>{ // key tyna kalla apata get eke dannath ahaki
+    //ethakota response data eka ennema e dala tyna type ekata
     .pipe(map(responsedata=>{
-      const postArray = [];
+      //ML6FxiU1rcJESJ4Y0WE: 
+          //content: "nnnnnnnnnnnnnnn" 
+          //title: "aaa"
+      const postArray: Post[] = [];//post object tyna array ekak
       for(const key in  responsedata){
         if(responsedata.hasOwnProperty(key)){//Determines whether an object has a property with the specified name.
           postArray.push({ ...responsedata[key], id: key });
@@ -76,8 +92,10 @@ export class AppComponent {
       return postArray;
     }))
     .subscribe(//return postArray kiyana eka thama subscribe function ekata enne
-      posts =>{
+      posts =>{//{ ...responsedata[key], id: key } dala tyna nisa typescript eka danne ne meka mona wage type ekaka ekak da kiyala
         console.log(posts);
+        this.isFetching = false;
+        this.loadedPosts = posts;
       }
     );
   }
