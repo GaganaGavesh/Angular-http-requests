@@ -52,7 +52,12 @@ export class AppComponent {
     //     //this.fetchPosts();
     //   }
     // );
-    this.postsService.createAndStoreposts(postData.title, postData.content);
+    this.postsService.createAndStoreposts(postData.title, postData.content)
+    .subscribe(
+      responseData=>{
+        console.log(responseData);
+        this.onFetchPosts();
+      });;
     //Angular eka observables use karanawa godak, Http requests manage karanneth observables walin
     //Api uda hadapu http request ekata subscribe karala nathnam, angular and rxjs eka hithanawa kauruth response eka gana 
     //interest ne kiyala e nisa request eka yawanne wath ne 
@@ -66,6 +71,7 @@ export class AppComponent {
         //POST request ekak yawanakota OPTIONS kiyala method ekakin request ekakyawala balanawa post request 
         //send karanna allow karalada tynne balanna, 200 status code eka awoth ekata actual data tika POST karanawa
     this.postForm.reset();
+    
     
   }
 
@@ -83,7 +89,13 @@ export class AppComponent {
   }
 
   onClearPosts() {
-    // Send Http request
+    // Send Http request DELETE
+
+    this.postsService.deletePosts().subscribe(
+      ()=>{
+        this.loadedPosts = [];
+      }
+    )
   }
   
   // private fetchPosts(){
