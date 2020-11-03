@@ -1,25 +1,35 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, OnDestroy, ViewChild, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 
 import { Post } from './post.model';
 import { NgForm } from '@angular/forms';
 import { postsService } from './posts.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent {
+export class AppComponent implements OnInit, OnDestroy {
    title = 'Angular http Requests';
     @ViewChild('postForm') postForm: NgForm;
    loadedPosts: Post[]= [];
    isFetching = false;
+   error = null; 
+   private errorSubscription: Subscription;
 
   constructor(private http: HttpClient, private postsService: postsService) {}
 
   ngOnInit() {
+    //meka api hadapu observable ekak neh,subject ekak neh, enisa angular eken auto unsubscribe kaaranne ne
+    //http wala wage ,e nisa api manually subscribe karanna ona
+    this.errorSubscription = this.postsService.error.subscribe(errorMessage=>{
+      this.error = errorMessage;
+      console.log(this.error);
+    });
+    
     //load post when loding  of the component
     this.isFetching = true;
     this.postsService.fetchPosts()
@@ -28,6 +38,8 @@ export class AppComponent {
         this.loadedPosts = posts;
         this.isFetching = false;
         console.log(posts);
+      },error=>{
+        this.error = error.message;
       }
     );
   }
@@ -53,11 +65,11 @@ export class AppComponent {
     //   }
     // );
     this.postsService.createAndStoreposts(postData.title, postData.content)
-    .subscribe(
-      responseData=>{
-        console.log(responseData);
-        this.onFetchPosts();
-      });;
+    // .subscribe(
+    //   responseData=>{
+    //     console.log(responseData);
+    //     this.onFetchPosts();
+    //   });;//create una gaman post tika refresh wenna
     //Angular eka observables use karanawa godak, Http requests manage karanneth observables walin
     //Api uda hadapu http request ekata subscribe karala nathnam, angular and rxjs eka hithanawa kauruth response eka gana 
     //interest ne kiyala e nisa request eka yawanne wath ne 
@@ -77,6 +89,9 @@ export class AppComponent {
 
   onFetchPosts() {
     // Send Http request tho get the posts
+
+    //observable ekak subscribe kalama eke palaweni function eka fire wenne new data ekak emit wenakota
+    //anith function eka thama n=error emit unama fire wena eka
     this.isFetching = true;
     this.postsService.fetchPosts()
     .subscribe(
@@ -84,6 +99,9 @@ export class AppComponent {
         this.loadedPosts = posts;
         this.isFetching = false;
         console.log(posts);
+      },error=>{
+        this.error = error.message;
+        console.log(error);
       }
     );
   }
@@ -130,5 +148,9 @@ export class AppComponent {
   //     }
   //   );
   // }
+
+  ngOnDestroy(){
+    this.errorSubscription.unsubscribe();
+  }
 
 }
