@@ -13,11 +13,12 @@ export class postsService{
         
         const postData: Post = {title: title, content: content}
         //post data
-        this.http.post<{name: string}>('https://ng-complete-guide-4fb9a.firebaseio.com/posts.json', 
-        postData).subscribe(
-          responseData=>{
-            console.log(responseData);
-          });//me ena response eken component ekata wadak nathnam 
+        return this.http.post<{name: string}>('https://ng-complete-guide-4fb9a.firebaseio.com/posts.json', 
+        postData);
+        // .subscribe(
+        //   responseData=>{
+        //     console.log(responseData);
+        //   });//me ena response eken component ekata wadak nathnam 
           //subscribe eka methana dammata aulak ne 
           //component ekata e data gannawa nam subscribe eka component eke dana eka thama hoda
 
@@ -36,8 +37,12 @@ export class postsService{
         }
       }
       return postArray;
-    })
-    );
+        })
+      );
+    }
+
+    deletePosts(){
+      return this.http.delete('https://ng-complete-guide-4fb9a.firebaseio.com/posts.json')
     }
 
     
