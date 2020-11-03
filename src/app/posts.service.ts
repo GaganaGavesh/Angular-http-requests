@@ -1,5 +1,7 @@
 import { HttpClient } from '@angular/common/http';
+import { StringMapWithRename } from '@angular/compiler/src/compiler_facade_interface';
 import { Injectable } from '@angular/core';
+import { Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { Post } from './post.model';
@@ -7,18 +9,22 @@ import { Post } from './post.model';
 @Injectable({providedIn: 'root'})// module.ts wala root eke dammath hari
 export class postsService{
 
+    error = new Subject<String>();// me subject ekata subscribe kalama create and store weddi ena errors ganna pluwn
+
     constructor(private http: HttpClient){}
 
     createAndStoreposts(title: string, content: string){
         
         const postData: Post = {title: title, content: content}
         //post data
-        return this.http.post<{name: string}>('https://ng-complete-guide-4fb9a.firebaseio.com/posts.json', 
-        postData);
-        // .subscribe(
-        //   responseData=>{
-        //     console.log(responseData);
-        //   });//me ena response eken component ekata wadak nathnam 
+        this.http.post<{name: string}>('https://ng-complete-guide-4fb9a.firebaseio.com/posts.json', 
+        postData)
+        .subscribe(
+          responseData=>{
+            console.log(responseData);
+          },error=>{
+            this.error.next(error.message);
+          });//me ena response eken component ekata wadak nathnam 
           //subscribe eka methana dammata aulak ne 
           //component ekata e data gannawa nam subscribe eka component eke dana eka thama hoda
 
@@ -42,7 +48,8 @@ export class postsService{
     }
 
     deletePosts(){
-      return this.http.delete('https://ng-complete-guide-4fb9a.firebaseio.com/posts.json')
+      return this.http.delete('https://ng-complete-guide-4fb9a.firebaseio.com/posts.json');
+      //ppost nde eke tyna serama ewa delete wenawaa
     }
 
     
