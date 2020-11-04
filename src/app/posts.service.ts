@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { StringMapWithRename } from '@angular/compiler/src/compiler_facade_interface';
 import { Injectable } from '@angular/core';
 import { Subject, throwError } from 'rxjs';
@@ -39,14 +39,19 @@ export class postsService{
       
       //Special headers Ex:- authorization header(that authorize the user)
       //onama hhtp service method ekaka anthima argumant eka widiyata yawana object eke thama headers dala yawane
-      //
+    let searchparams = new HttpParams();
+    searchparams = searchparams.append('print','pretty');//firebase eke doc wala tyna ekak meka//response tab eke post print wenawa
+    searchparams = searchparams.append('custom','tada');//dana dana eka append wenawa ekama variable ekata
+    console.log(searchparams);//Appends a new value to existing values for a parameter.
     return this.http.get<{[key: string]: Post}>('https://ng-complete-guide-4fb9a.firebaseio.com/posts.json',
     {
       headers: new HttpHeaders(
         {
           'Custom-Header': 'Hello There'//mekata denna pluwan headers wala hey value pairs
         }
-      )
+      ),
+      //params: new HttpParams().set('print','pretty')//set(param: string, value: string)
+      params: searchparams
     })
     .pipe(map(responsedata=>{
       const postArray: Post[] = [];//post object tyna array ekak
