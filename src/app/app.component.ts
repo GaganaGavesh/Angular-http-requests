@@ -39,6 +39,9 @@ export class AppComponent implements OnInit, OnDestroy {
         this.isFetching = false;
         console.log(posts);
       },error=>{
+        this.isFetching = false;//mekadamme nathnam error awama post load wenne ne
+        //E mko udin isFetching true watila tynawa error ekak nisa posts kiyana eka athulata yann ne
+        //error ekata enne ethendi isfetching false kaloth thama ui eke post load karaaa eka patanganne
         this.error = error.message;
       }
     );
@@ -148,6 +151,10 @@ export class AppComponent implements OnInit, OnDestroy {
   //     }
   //   );
   // }
+
+  onHandleError(){
+    this.error = null;
+  }
 
   ngOnDestroy(){
     this.errorSubscription.unsubscribe();
