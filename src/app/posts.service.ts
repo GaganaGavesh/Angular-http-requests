@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { StringMapWithRename } from '@angular/compiler/src/compiler_facade_interface';
 import { Injectable } from '@angular/core';
 import { Subject, throwError } from 'rxjs';
@@ -36,8 +36,18 @@ export class postsService{
       //kauruth interest nathnam request eka yawanne ne e nisa kohe hari subscribe karala tyenna ona
       //pipe eke map wagema thawa catchError kiyala function ekak nuth danna pluwn.
       //fetch ekedi ena error ekak handle karanna ona una nam methenta catchError kiyanna eka danawa
+      
+      //Special headers Ex:- authorization header(that authorize the user)
+      //onama hhtp service method ekaka anthima argumant eka widiyata yawana object eke thama headers dala yawane
       //
-    return this.http.get<{[key: string]: Post}>('https://ng-complete-guide-4fb9a.firebaseio.com/posts.json')
+    return this.http.get<{[key: string]: Post}>('https://ng-complete-guide-4fb9a.firebaseio.com/posts.json',
+    {
+      headers: new HttpHeaders(
+        {
+          'Custom-Header': 'Hello There'//mekata denna pluwan headers wala hey value pairs
+        }
+      )
+    })
     .pipe(map(responsedata=>{
       const postArray: Post[] = [];//post object tyna array ekak
       for(const key in  responsedata){
