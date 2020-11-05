@@ -1,8 +1,8 @@
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams, HttpEventType } from '@angular/common/http';
 import { StringMapWithRename } from '@angular/compiler/src/compiler_facade_interface';
 import { Injectable } from '@angular/core';
 import { Subject, throwError } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
+import { map, catchError, tap } from 'rxjs/operators';
 
 import { Post } from './post.model';
 
@@ -78,7 +78,19 @@ export class postsService{
     }
 
     deletePosts(){
-      return this.http.delete('https://ng-complete-guide-4fb9a.firebaseio.com/posts.json');
+      return this.http.delete('https://ng-complete-guide-4fb9a.firebaseio.com/posts.json',
+      {
+        observe: 'events'
+      }).pipe(tap(event=>{
+        console.log(event);
+        if(event.type== HttpEventType.Sent){
+          //Request eka send kala //response ekata waiting innawa kiyala thama methana sent eke kiyanne
+          //e athare apata meka pennanna pluwn UI eke api request eka sent kala kiyala
+        }
+        if(event.type== HttpEventType.Response){
+          console.log(event.body);//event eka thama tap eken ena object eka eke ona property ekak access karanna ahaki
+        }
+      }));
       //ppost nde eke tyna serama ewa delete wenawaa
     }
 
