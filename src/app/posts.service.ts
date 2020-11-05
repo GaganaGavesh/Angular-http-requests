@@ -54,7 +54,9 @@ export class postsService{
         }
       ),
       //params: new HttpParams().set('print','pretty')//set(param: string, value: string)
-      params: searchparams
+      params: searchparams,
+      responseType: 'json'//apata ganna ona eka text format eken tynna ona kiyala angular ekata kiyanna ona nam 
+      //methana 'text' kiyala denna pluwan ethakota angular eka eka json walata convert karan ne
     })
     .pipe(map(responsedata=>{
       const postArray: Post[] = [];//post object tyna array ekak
@@ -86,6 +88,7 @@ export class postsService{
         if(event.type== HttpEventType.Sent){
           //Request eka send kala //response ekata waiting innawa kiyala thama methana sent eke kiyanne
           //e athare apata meka pennanna pluwn UI eke api request eka sent kala kiyala
+          //mewagen data aragena api app eke mona phase eke innawada kiyala userta details denna pluwn
         }
         if(event.type== HttpEventType.Response){
           console.log(event.body);//event eka thama tap eken ena object eka eke ona property ekak access karanna ahaki
