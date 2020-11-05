@@ -18,7 +18,10 @@ export class postsService{
         const postData: Post = {title: title, content: content}
         //post data
         this.http.post<{name: string}>('https://ng-complete-guide-4fb9a.firebaseio.com/posts.json', 
-        postData)
+        postData,
+        {
+          observe: 'response'
+        })
         .subscribe(
           responseData=>{
             console.log(responseData);
