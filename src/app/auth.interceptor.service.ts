@@ -1,4 +1,5 @@
-import { HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
+import { HttpEventType, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
+import { tap } from 'rxjs/operators';
 
 export class AuthInterceptorService implements HttpInterceptor{
     intercept(req: HttpRequest<any>, next: HttpHandler){
@@ -15,6 +16,17 @@ export class AuthInterceptorService implements HttpInterceptor{
         //return next.handle(req);//Aapp eka yawana onama request ekakata me method eka run wenawa
         //e nisa wena wenama headers dada inna ona ne podu ewa serama mekata danna pluwan
 
-        return next.handle(modifiedRequest);//meka return kalama append una headers thama return wenne
+        //handle eken return karanneth observable ekak
+        //eka subscribe karanna pluwn
+        return next.handle(modifiedRequest).pipe(tap(
+            event=>{
+                console.log(event);
+                if(event.type == HttpEventType.Response){
+                    console.log('Response arrived');
+                    console.log(event.body);
+                }
+            }//map operator rka unath pluwa 
+            //data tika transform karanna wage ona nam
+        ));//meka return kalama append una headers thama return wenne
     }
 }
