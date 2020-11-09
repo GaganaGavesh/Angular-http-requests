@@ -7,6 +7,7 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';//mek
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AuthInterceptorService } from './auth.interceptor.service';
+import { LoggingInterceptorService } from './logging-interceptor.service';
 
 @NgModule({
   declarations: [
@@ -18,10 +19,17 @@ import { AuthInterceptorService } from './auth.interceptor.service';
     FormsModule,
     HttpClientModule
   ],
+  //interceptors dana piliwela wadagath mkoda e dana piliwelata thama run wennne
   providers: [{
     provide: HTTP_INTERCEPTORS, 
     useClass: AuthInterceptorService, 
-    multi: true}],//dan angular eken request ekak leave wenakota interceptor method eka run wela e ethod eke tyna 
+    multi: true},
+    {
+    provide: HTTP_INTERCEPTORS, 
+    useClass: LoggingInterceptorService, 
+    multi: true
+    }
+  ],//dan angular eken request ekak leave wenakota interceptor method eka run wela e ethod eke tyna 
     //request header yawana wade karanawa
   bootstrap: [AppComponent]
 })

@@ -1,10 +1,11 @@
 import { HttpEventType, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
 import { tap } from 'rxjs/operators';
-
+//Interceptor waladi request ekata headers append karanawa 
+//meka server user authentication waladi ehema wadagath wenawa
 export class AuthInterceptorService implements HttpInterceptor{
     intercept(req: HttpRequest<any>, next: HttpHandler){
-        console.log('Request is on the way');
-        console.log(req.url);
+        // console.log('Request is on the way');
+        // console.log(req.url);
         //request objects immutable e nisa wena value set karanna be 
         //req.url = 'a new url';//meheama danna be
         const modifiedRequest = req.clone({headers: req.headers.append('Auth','xyz')});
@@ -18,15 +19,16 @@ export class AuthInterceptorService implements HttpInterceptor{
 
         //handle eken return karanneth observable ekak
         //eka subscribe karanna pluwn
-        return next.handle(modifiedRequest).pipe(tap(
-            event=>{
-                console.log(event);
-                if(event.type == HttpEventType.Response){
-                    console.log('Response arrived');
-                    console.log(event.body);
-                }
-            }//map operator rka unath pluwa 
-            //data tika transform karanna wage ona nam
-        ));//meka return kalama append una headers thama return wenne
+        return next.handle(modifiedRequest)
+        // .pipe(tap(
+        //     event=>{
+        //         console.log(event);
+        //         if(event.type == HttpEventType.Response){
+        //             console.log('Response arrived');
+        //             console.log(event.body);
+        //         }
+        //     }//map operator rka unath pluwa 
+        //     //data tika transform karanna wage ona nam
+        // ));//meka return kalama append una headers thama return wenne
     }
 }
